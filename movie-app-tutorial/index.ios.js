@@ -13,19 +13,58 @@ import {
   View
 } from 'react-native';
 
-const MOCKED_MOVIES_DATA = [
-  {title: 'Title', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
-];
+const REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
 class Project extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      movies: null,
+    };
+  }
+  
+  // Called exactly once, after the component has been loaded.
+  componentDidMount() {
+    this.fetchData();
+  }
+  
+  fetchData() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.setState({ // Triggers a re-render
+          movies: responseData.movies,
+        });
+      })
+      .done(); // Always call done() or any errors thrown will get swallowed.
+  }
+  
   render() {
-    var movie = MOCKED_MOVIES_DATA[0];
+    if (!this.state.movies) {
+      return this.renderLoadingView();
+    }
+
+    var movie = this.state.movies[0];
+    return this.renderMovie(movie);
+  }
+
+  renderLoadingView() {
     return (
       <View style={styles.container}>
-        <Image 
-          source={{uri: movie.posters.thumbnail}} 
+        <Text>
+          Loading movies...
+        </Text>
+      </View>
+    );
+  }
+
+  renderMovie(movie) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{uri: movie.posters.thumbnail}}
           style={styles.thumbnail}
-          />
+        />
         <View style={styles.rightContainer}>
           <Text style={styles.title}>{movie.title}</Text>
           <Text style={styles.year}>{movie.year}</Text>
