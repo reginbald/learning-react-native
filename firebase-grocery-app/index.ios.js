@@ -11,7 +11,8 @@ import {
   StyleSheet,
   Text,
   View,
-  ListView
+  ListView,
+  AlertIOS
 } from 'react-native';
 
 import StatusBar from './components/StatusBar';
@@ -71,12 +72,28 @@ export default class GroceryApp extends Component {
     );
   }
 
+  _addItem() {
+    AlertIOS.prompt(
+      'Add New Item',
+      null,
+      [
+        {
+          text: 'Add',
+          onPress: (text) => {
+            this.itemsRef.push({ title: text })
+          }
+        },
+      ],
+      'plain-text'
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <StatusBar title="Grocery List"/>
         <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
-        <ActionButton title="Add" onPress={() => {}} />
+        <ActionButton title="Add" onPress={this._addItem.bind(this)}/>
       </View>
     );
   }
