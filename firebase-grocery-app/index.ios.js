@@ -67,8 +67,20 @@ export default class GroceryApp extends Component {
   }
 
   _renderItem(item) {
+    const onPress = () => {
+      AlertIOS.prompt(
+        'Complete',
+        null,
+        [
+          {text: 'Complete', onPress: (text) => this.itemsRef.child(item._key).remove()},
+          {text: 'Cancel', onPress: (text) => console.log('Cancel')}
+        ],
+        'default'
+      );
+    };
+
     return (
-      <ListItem item={item} onPress={() => {}} />
+      <ListItem item={item} onPress={onPress}/>
     );
   }
 
@@ -92,7 +104,7 @@ export default class GroceryApp extends Component {
     return (
       <View style={styles.container}>
         <StatusBar title="Grocery List"/>
-        <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
+        <ListView enableEmptySections={true} dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
         <ActionButton title="Add" onPress={this._addItem.bind(this)}/>
       </View>
     );
