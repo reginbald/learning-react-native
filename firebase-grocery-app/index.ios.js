@@ -34,6 +34,7 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 export default class GroceryApp extends Component {
   constructor(props) {
     super(props);
+    this.itemsRef = firebaseApp.database().ref();
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -42,9 +43,26 @@ export default class GroceryApp extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
-    })
+    this.listenForItems(this.itemsRef);
+  }
+
+  listenForItems(itemsRef) {
+    itemsRef.on('value', (snap) => {
+
+      // get children as an array
+      var items = [];
+      snap.forEach((child) => {
+        items.push({
+          title: child.val().title,
+          _key: child.key
+        });
+      });
+
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+
+    });
   }
 
   _renderItem(item) {
@@ -56,13 +74,9 @@ export default class GroceryApp extends Component {
   render() {
     return (
       <View style={styles.container}>
-
         <StatusBar title="Grocery List"/>
-
         <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
-
         <ActionButton title="Add" onPress={() => {}} />
-
       </View>
     );
   }
