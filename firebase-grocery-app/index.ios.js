@@ -10,8 +10,13 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ListView
 } from 'react-native';
+
+import StatusBar from './components/StatusBar';
+import ActionButton from './components/ActionButton';
+import ListItem from './components/ListItem';
 
 const styles = require('./styles.js')
 
@@ -27,9 +32,37 @@ const firebaseConfig = {
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export default class GroceryApp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      })
+    };
+  }
+
+  componentDidMount() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
+    })
+  }
+
+  _renderItem(item) {
+    return (
+      <ListItem item={item} onPress={() => {}} />
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
+
+        <StatusBar title="Grocery List"/>
+
+        <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
+
+        <ActionButton title="Add" onPress={() => {}} />
+
       </View>
     );
   }

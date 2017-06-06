@@ -6,7 +6,7 @@ const styles = require('../styles.js')
 const constants = styles.constants;
 const { StyleSheet, Text, View, TouchableHighlight} = ReactNative;
 
-class ActionButton extends Component {
+export default class ActionButton extends Component {
   render() {
     return (
       <View style={styles.action}>
@@ -19,5 +19,3 @@ class ActionButton extends Component {
     );
   }
 }
-
-module.exports = ActionButton;
